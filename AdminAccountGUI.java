@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.ArrayList;
@@ -219,12 +220,14 @@ public class AdminAccountGUI extends JFrame {
                     );
 
                     try {
+
+                        String hashpassword = HashFunction.hashPassword(new_password);
                         Connection connection = Database.connection;
                         String query = "UPDATE Employee_account SET name = ?, username = ?, password = ? WHERE account_ID = ?";
                         PreparedStatement stm = connection.prepareStatement(query);
                         stm.setString(1, new_name);
                         stm.setString(2, new_username);
-                        stm.setString(3, new_password);
+                        stm.setString(3, hashpassword);
                         stm.setInt(4, Integer.parseInt(account_id));
                         stm.executeUpdate();
 
@@ -233,6 +236,8 @@ public class AdminAccountGUI extends JFrame {
                                 "Completed ",
                                 JOptionPane.ERROR_MESSAGE );
                     } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } catch (NoSuchAlgorithmException ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -293,12 +298,15 @@ public class AdminAccountGUI extends JFrame {
 
 
                     try {
+
+                        String hashpassword = HashFunction.hashPassword(new_password);
+
                         Connection connection = Database.connection;
                         String query = "UPDATE Customer_accounts SET customer_name = ?, username = ?, password = ?, address = ? WHERE account_ID = ?";
                         PreparedStatement stm = connection.prepareStatement(query);
                         stm.setString(1, new_name);
                         stm.setString(2, new_username);
-                        stm.setString(3, new_password);
+                        stm.setString(3, hashpassword);
                         stm.setString(4, new_address);
                         stm.setInt(5, Integer.parseInt(account_id));
                         stm.executeUpdate();
@@ -308,6 +316,8 @@ public class AdminAccountGUI extends JFrame {
                                 "Completed ",
                                 JOptionPane.ERROR_MESSAGE );
                     } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } catch (NoSuchAlgorithmException ex) {
                         ex.printStackTrace();
                     }
                 }

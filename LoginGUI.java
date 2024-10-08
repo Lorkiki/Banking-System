@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -126,6 +127,9 @@ public class LoginGUI extends Component {
         mainFrame.setVisible(true);
     }
 
+
+
+
     public boolean authentication(String username, String password, String type) {
         boolean accountFound = false;
         boolean passwordcorrect = false;
@@ -133,22 +137,31 @@ public class LoginGUI extends Component {
             Connection connection = Database.connection; // Connect to database
             String query = null;
 
-            if (type.equalsIgnoreCase("Customer")) { query = "SELECT * FROM Customer_accounts " ;}
-            else if (type.equalsIgnoreCase("Employee")) { query = "SELECT * FROM Employee_account" ;}
-             if (type.equalsIgnoreCase("Admin")) { query = "SELECT * FROM Admin_account" ;}
+            if (type.equalsIgnoreCase("Customer")) {
+                query = "SELECT * FROM Customer_accounts " ;}
+            else if (type.equalsIgnoreCase("Employee")) {
+                query = "SELECT * FROM Employee_account" ;}
+            else if (type.equalsIgnoreCase("Admin")) {
+                query = "SELECT * FROM Admin_account" ;
+            }
              
             Statement stm = connection.createStatement(); // Create statement
             ResultSet result = stm.executeQuery(query); // Execute the query
+
+
             String dataUsername;
             String dataPassword;
             int account_ID;
+
+
             while (result.next()) {
                 dataUsername = result.getString("username");
                 dataPassword = result.getString("password");
                 account_ID = result.getInt("account_ID");
                 if(dataUsername.equalsIgnoreCase(username))
                 { accountFound = true;
-                    if (dataPassword.equals(password) && accountFound)
+
+                    if (HashFunction.checkPassword(password, dataPassword) && accountFound)
                     {
                         passwordcorrect = true;
                         if (type.equalsIgnoreCase("Customer")) {

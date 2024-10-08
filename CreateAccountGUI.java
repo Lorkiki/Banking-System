@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 
 import static Bank.Database.connection;
@@ -82,11 +83,12 @@ public class CreateAccountGUI extends Component {
                 String name = nameField.getText();
                 String username = usernameField.getText();
                 String password = passwordField.getText();
+
+
+
                 if (!sameUsername){
-
-
-
                     try {
+                        String haspassword = HashFunction.hashPassword(password);
                         Connection connection = Database.connection;
                         String query = null;
                         if (accountType.equalsIgnoreCase("Customer")) {
@@ -100,7 +102,7 @@ public class CreateAccountGUI extends Component {
                         PreparedStatement stm = connection.prepareStatement(query);
                         stm.setString(1, name);
                         stm.setString(2, username);
-                        stm.setString(3, password);
+                        stm.setString(3, haspassword);
                         stm.executeUpdate();
                         JOptionPane.showMessageDialog(CreateAccountGUI.this, "Account created", "Account created ", JOptionPane.ERROR_MESSAGE);
                         mainFrame.dispose();
